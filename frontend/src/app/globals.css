@@ -1,0 +1,226 @@
+:root {
+  /* Premium Light Theme - HSL */
+  --background: 0 0% 100%;
+  --foreground: 222.2 84% 4.9%;
+
+  --card: 0 0% 100%;
+  --card-foreground: 222.2 84% 4.9%;
+
+  --popover: 0 0% 100%;
+  --popover-foreground: 222.2 84% 4.9%;
+
+  --primary: 262.1 83.3% 57.8%;
+  /* Vibrant Purple */
+  --primary-foreground: 210 40% 98%;
+
+  --secondary: 210 40% 96.1%;
+  --secondary-foreground: 222.2 47.4% 11.2%;
+
+  --muted: 210 40% 96.1%;
+  --muted-foreground: 222.2 84% 4.9%;
+
+  --accent: 210 40% 96.1%;
+  --accent-foreground: 222.2 47.4% 11.2%;
+
+  --destructive: 0 84.2% 60.2%;
+  --destructive-foreground: 210 40% 98%;
+
+  --border: 214.3 31.8% 91.4%;
+  --input: 214.3 31.8% 91.4%;
+  --ring: 262.1 83.3% 57.8%;
+
+  --radius: 1rem;
+  --sidebar-width: 260px;
+}
+
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+  border-width: 0;
+  border-style: solid;
+  border-color: hsl(var(--border));
+}
+
+body {
+  background-color: hsl(var(--background));
+  background-image:
+    radial-gradient(at 0% 0%, hsla(262, 83%, 58%, 0.05) 0px, transparent 50%),
+    radial-gradient(at 100% 100%, hsla(280, 70%, 50%, 0.03) 0px, transparent 50%);
+  color: hsl(var(--foreground));
+  font-family: var(--font-geist-sans), system-ui, sans-serif;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  min-height: 100vh;
+  overflow-x: hidden;
+}
+
+h1,
+h2,
+h3,
+h4,
+h5,
+h6 {
+  font-weight: 700;
+  letter-spacing: -0.04em;
+  line-height: 1.2;
+}
+
+/* Glassmorphism */
+.glass {
+  background: hsla(var(--card) / 0.7);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  border: 1px solid hsla(var(--border) / 0.5);
+}
+
+.container {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 0 1.5rem;
+}
+
+/* Premium Transitions */
+.transition-all {
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.hover-lift:hover {
+  transform: translateY(-4px) scale(1.02);
+  box-shadow: 0 20px 25px -5px rgb(0 0 0 / 0.2), 0 8px 10px -6px rgb(0 0 0 / 0.2);
+}
+
+/* Modern Scrollbar */
+::-webkit-scrollbar {
+  width: 8px;
+}
+
+::-webkit-scrollbar-track {
+  background: hsl(var(--background));
+}
+
+::-webkit-scrollbar-thumb {
+  background: hsl(var(--secondary));
+  border-radius: 10px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: hsl(var(--muted-foreground));
+}
+
+/* Animations */
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.animate-fade-in {
+  animation: fadeIn 0.5s ease-out forwards;
+}
+
+.sidebar-item:hover:not(:disabled) {
+  background-color: hsla(var(--primary) / 0.1) !important;
+  color: hsl(var(--primary)) !important;
+}
+
+@media screen and (max-width: 768px) {
+
+  input,
+  select,
+  textarea {
+    font-size: 16px !important;
+  }
+
+  .hidden-on-mobile {
+    display: none !important;
+  }
+
+
+  .visible-on-mobile {
+    display: block !important;
+  }
+
+  .mobile-no-margin {
+    margin-left: 0 !important;
+    width: 100% !important;
+    padding: 1rem !important;
+  }
+
+  /* Nubank Mobile Specifics */
+  .nubank-header {
+    background-color: #820ad1;
+    /* Nubank Purple */
+    color: white;
+    padding: 1.5rem 1rem 4rem;
+    /* Extra padding bottom for overlap */
+    margin: -2rem -1rem 1rem -1rem;
+    /* Negative margin to cover container padding */
+    border-radius: 0 0 1.5rem 1.5rem;
+    /* Soft curve at bottom could be nice, or just flat */
+  }
+
+  .nubank-card {
+    background: white;
+    color: black;
+    padding: 1.5rem;
+    border-radius: 1rem;
+    margin-top: -3rem;
+    /* Overlap header */
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+  }
+
+  .nubank-action-scroll {
+    display: flex;
+    overflow-x: auto;
+    gap: 1rem;
+    padding: 1.5rem 0.5rem;
+    -ms-overflow-style: none;
+    /* IE and Edge */
+    scrollbar-width: none;
+    /* Firefox */
+  }
+
+  .nubank-action-scroll::-webkit-scrollbar {
+    display: none;
+  }
+
+  .nubank-action-btn {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 0.5rem;
+    min-width: 70px;
+    background: none;
+    border: none;
+    cursor: pointer;
+  }
+
+  .nubank-action-icon {
+    width: 60px;
+    height: 60px;
+    border-radius: 50%;
+    background-color: hsl(var(--secondary));
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.5rem;
+  }
+
+  .nubank-action-label {
+    font-size: 0.85rem;
+    font-weight: 500;
+  }
+}
+
+@media (min-width: 769px) {
+  .visible-on-mobile {
+    display: none !important;
+  }
+}

@@ -1,0 +1,198 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+enum ContextType {
+  PERSONAL
+  SHARED
+}
+
+enum Role {
+  ADMIN
+  COLLABORATOR
+  VIEWER
+}
+
+enum AccountType {
+  CASH
+  CREDIT
+  INVESTMENT
+  ASSET
+}
+
+enum TransactionType {
+  INCOME        // Entrada (Salário, Vendas)
+  EXPENSE       // Saída (Gasto, Compra)
+  TRANSFER      // Transferência entre contas
+  INVESTMENT    // Aporte em Investimento
+  REDEMPTION    // Resgate de Investimento
+  ADJUSTMENT    // Ajuste de Saldo
+}
+
+enum CategoryType {
+  INCOME
+  EXPENSE
+  INVESTMENT
+}
+
+model User {
+  id        String   @id @default(uuid())
+  email     String   @unique
+  name      String
+  password  String
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  contexts  ContextUser[]
+}
+
+model Context {
+  id        String   @id @default(uuid())
+  name      String
+  type      ContextType
+  features  String[]     @default([]) // e.g. ["INVESTMENTS", "BUDGETS"]
+  createdAt DateTime     @default(now())
+  updatedAt DateTime @updatedAt
+
+  users     ContextUser[]
+  accounts  Account[]
+  transactions Transaction[]
+  categories   Category[]
+
+  budgets      Budget[]
+  recurringExpenses RecurringExpense[]
+}
+
+model ContextUser {
+  id        String   @id @default(uuid())
+  userId    String
+  contextId String
+  role      Role
+
+  user      User     @relation(fields: [userId], references: [id])
+  context   Context  @relation(fields: [contextId], references: [id])
+
+  @@unique([userId, contextId])
+}
+
+model Account {
+  id             String      @id @default(uuid())
+  name           String
+  type           AccountType
+  initialBalance Decimal     @default(0)
+  archived       Boolean     @default(false)
+  contextId      String
+  
+  context        Context     @relation(fields: [contextId], references: [id])
+  
+  transactionsFrom Transaction[] @relation("SourceAccount")
+  transactionsTo   Transaction[] @relation("DestinationAccount")
+  
+  createdAt      DateTime    @default(now())
+
+  updatedAt      DateTime    @updatedAt
+  
+  recurringExpenses RecurringExpense[]
+}
+
+model Category {
+  id        String       @id @default(uuid())
+  name      String
+  icon      String?      // Emoji ou nome de icone string
+  type      CategoryType // Para filtrar em dropdowns
+  
+  contextId String
+  context   Context      @relation(fields: [contextId], references: [id])
+  
+  transactions Transaction[]
+
+  budgets      Budget[]
+  recurringExpenses RecurringExpense[]
+  
+  createdAt DateTime     @default(now())
+  updatedAt DateTime     @updatedAt
+
+  @@unique([contextId, name, type]) // Evitar nomes duplicados no mesmo contexto e tipo
+}
+
+model Transaction {
+  id            String          @id @default(uuid())
+  description   String
+  amount        Decimal
+  
+  type          TransactionType
+  isPaid        Boolean         @default(true) 
+  dueDate       DateTime?       
+  paymentDate   DateTime?       
+  
+  date          DateTime
+
+  contextId     String
+  context       Context         @relation(fields: [contextId], references: [id])
+  
+  categoryId    String?
+  category      Category?       @relation(fields: [categoryId], references: [id])
+  
+  sourceAccountId      String?
+  destinationAccountId String?
+
+  sourceAccount        Account?  @relation("SourceAccount", fields: [sourceAccountId], references: [id])
+  destinationAccount   Account?  @relation("DestinationAccount", fields: [destinationAccountId], references: [id])
+
+  installmentNumber Int?      // 1/12
+  installmentsTotal Int?      // 10
+  
+  createdAt     DateTime        @default(now())
+  updatedAt     DateTime        @updatedAt
+}
+
+enum RecurrenceType {
+  FIXED     // Valor fixo (Netflix)
+  VARIABLE  // Valor variável (Luz, Água)
+}
+
+model RecurringExpense {
+  id                    String          @id @default(uuid())
+  description           String
+  amount                Decimal?        // Preenchido se for FIXED
+  type                  RecurrenceType
+  dayOfMonth            Int             // Dia do vencimento
+  notificationDaysBefore Int?           // Dias antes para avisar (se VARIABLE)
+  
+  active                Boolean         @default(true)
+  
+  contextId             String
+  context               Context         @relation(fields: [contextId], references: [id])
+  
+  categoryId            String?
+  category              Category?       @relation(fields: [categoryId], references: [id])
+  
+  sourceAccountId       String?
+  sourceAccount         Account?        @relation(fields: [sourceAccountId], references: [id])
+  
+  createdAt             DateTime        @default(now())
+  updatedAt             DateTime        @updatedAt
+}
+
+model Budget {
+  id          String   @id @default(uuid())
+  amount      Decimal
+  month       Int
+  year        Int
+
+  categoryId  String
+  category    Category @relation(fields: [categoryId], references: [id])
+
+  contextId   String
+  context     Context  @relation(fields: [contextId], references: [id])
+
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  @@unique([contextId, categoryId, month, year])
+}

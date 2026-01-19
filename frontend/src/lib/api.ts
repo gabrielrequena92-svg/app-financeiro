@@ -1,0 +1,18 @@
+import axios from 'axios';
+
+export const api = axios.create({
+    baseURL: process.env.NEXT_PUBLIC_API_URL || 'http://192.168.1.14:4000',
+    headers: {
+        'Content-Type': 'application/json',
+    },
+});
+
+api.interceptors.request.use((config) => {
+    if (typeof window !== 'undefined') {
+        const token = localStorage.getItem('finance_token');
+        if (token) {
+            config.headers['Authorization'] = `Bearer ${token}`;
+        }
+    }
+    return config;
+});
