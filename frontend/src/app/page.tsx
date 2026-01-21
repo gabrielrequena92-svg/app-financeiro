@@ -4,7 +4,7 @@ export default function Home() {
   return (
     <main className="container" style={{ paddingTop: '4rem', display: 'flex', flexDirection: 'column', gap: '2rem' }}>
       <header>
-        <h1 style={{ fontSize: '2.5rem', marginBottom: '0.5rem' }}>App Financeiro</h1>
+        <h1 style={{ fontSize: '2.5rem', marginBottom: '0.5rem' }}>App Financeiro Home</h1>
         <p style={{ color: 'hsl(var(--muted-foreground))', fontSize: '1.25rem' }}>
           Gestão financeira clara e compartilhada.
         </p>
